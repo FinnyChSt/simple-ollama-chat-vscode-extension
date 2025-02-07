@@ -3,6 +3,9 @@
   "displayName": "deep-ollama-chat",
   "description": "chat with deepseek",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FinnyChSt/simple-ollama-chat-vscode-extension"},
   "engines": {
     "vscode": "^1.97.0"
   },

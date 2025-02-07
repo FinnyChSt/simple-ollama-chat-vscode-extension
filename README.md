@@ -8,7 +8,7 @@ This respitory was inspired by a youtube video from [Fireship](https://www.youtu
 The main feature so far is to be able to chat with a locally run ollama server.
 run the following command in in the command Palette (cmd+shift+p): Ollama-Chat to start the chat.
 
-![CHAT](./images/chat-screen.png)
+![CHAT](https://github.com/FinnyChSt/simple-ollama-chat-vscode-extension/blob/main/images/chat-screen.png)
 
 ## Requirements
 
