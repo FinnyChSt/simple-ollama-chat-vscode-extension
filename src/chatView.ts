@@ -1,0 +1,133 @@
+export function getWebviewContent() {
+  return `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ollama Chat</title>
+    <style>
+      body {
+        padding: 10px;
+        color: var(--vscode-foreground);
+        font-family: var(--vscode-font-family);
+        background-color: var(--vscode-background);
+      }
+      #chat-container {
+        display: flex;
+        flex-direction: column;
+        height: 90vh;
+        border: 1px solid var(--vscode-input-border);
+        border-radius: 5px;
+        overflow: hidden;
+      }
+      #output {
+        flex-grow: 1;
+        padding: 10px;
+        overflow-y: auto;
+        background-color: var(--vscode-input-background);
+        border-bottom: 1px solid var(--vscode-input-border);
+      }
+      #input-container {
+        display: flex;
+        gap: 10px;
+        padding: 10px;
+        background-color: var(--vscode-input-background);
+      }
+      #question {
+        flex-grow: 1;
+        padding: 8px;
+        background: var(--vscode-input-background);
+        color: var(--vscode-input-foreground);
+        border: 1px solid var(--vscode-input-border);
+        border-radius: 5px;
+      }
+      .message {
+        margin-bottom: 8px;
+        padding: 10px 14px;
+        border-radius: 20px;
+        max-width: 70%;
+        clear: both;
+      }
+      .user {
+        background-color: #0084ff;
+        color: #fff;
+        float: right;
+        border-top-right-radius: 0;
+      }
+      .bot {
+        background-color: #e5e5ea;
+        color: #000;
+        float: left;
+        border-top-left-radius: 0;
+      }
+      button {
+        padding: 8px 16px;
+        background: var(--vscode-button-background);
+        color: var(--vscode-button-foreground);
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      button:hover {
+        background: var(--vscode-button-hoverBackground);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="chat-container">
+      <div id="output"></div>
+      <div id="input-container">
+        <input type="text" id="question" placeholder="Ask your question..." />
+        <button id="submit">Send</button>
+      </div>
+    </div>
+    <script>
+      const vscode = acquireVsCodeApi();
+      const output = document.getElementById("output");
+      let currentBotMessage = null;
+      const question = document.getElementById("question");
+      const submit = document.getElementById("submit");
+
+      submit.addEventListener("click", () => {
+        const text = question.value;
+        if (text) {
+          displayMessage(text, "user");
+          currentBotMessage = null;
+          vscode.postMessage({ command: "ask", text: text });
+          question.value = "";
+        }
+      });
+
+      question.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          submit.click();
+        }
+      });
+
+      window.addEventListener("message", (event) => {
+        const message = event.data;
+        switch (message.command) {
+          case "response":
+            if (!currentBotMessage) {
+              currentBotMessage = document.createElement("div");
+              currentBotMessage.classList.add("message", "bot");
+              output.appendChild(currentBotMessage);
+            }
+            currentBotMessage.textContent = message.text;
+            output.scrollTop = output.scrollHeight;
+            break;
+        }
+      });
+
+      function displayMessage(text, sender) {
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("message", sender);
+        messageDiv.textContent = text;
+        output.appendChild(messageDiv);
+        output.scrollTop = output.scrollHeight;
+      }
+    </script>
+  </body>
+</html>
+  `;
+}
